@@ -12,6 +12,7 @@ public class rightPaddle : MonoBehaviour
     void Start()
     {
         paddleR = new Prect("Right Paddle", 900, 100, 10, 30, true, "PADDLE");
+        Manager.colliderPrects.Add(paddleR);
     }
 
     // Update is called once per frame
@@ -19,7 +20,12 @@ public class rightPaddle : MonoBehaviour
     {
         paddleR.rect.y += -scaler * Input.GetAxis("Vertical2");
         if (paddleR.rect.y < 13) paddleR.rect.y = 13;
-        if (paddleR.rect.y > Screen.height - 50) paddleR.rect.y = Screen.height - 50;
+        if (paddleR.rect.y > Screen.height - 50) paddleR.rect.y = Screen.height - 50; 
+
+        if (Manager.ballLocation.x > Screen.width / 2) //Paddle AI
+        {
+            //paddleR.rect.y = Manager.ballLocation.y - 15;
+        }
     }
 
     private void OnGUI()

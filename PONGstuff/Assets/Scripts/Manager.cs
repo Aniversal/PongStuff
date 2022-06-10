@@ -17,9 +17,21 @@ public class Manager : MonoBehaviour
     //set inatial ball speed
     public static float initBallSpeed = 2.5f;
 
+    //Create a list of Prects that need to have collision dectection
+    public static List<Prect> colliderPrects = new List<Prect>();
+
     //Used for GUI.Box
     private static Texture2D _staticRectTexture;
     private static GUIStyle _staticRectStyle;
+
+    //used for scoring
+    public static int leftScore;
+    public static int rightScore;
+
+    private Rect leftScoreText;
+    private Rect rightScoreText;
+
+
 
     // Start is called before the first frame update
     void Start()
@@ -27,12 +39,29 @@ public class Manager : MonoBehaviour
         upperWall = new Prect("Upper Wall", 0, 0, Screen.width, 10, true, "WALL");
         lowerWall = new Prect("Lower Wall", 0, Screen.height - 10, Screen.width, 10, true, "WALL");
         centerLine = new Prect("Center Wall", Screen.width / 2, 0, 5, Screen.height, false, "CTRLINE");
+
+        //Add to colliderPrects that objects that require collision
+        colliderPrects.Add(upperWall);
+        colliderPrects.Add(lowerWall);
+
+        leftScore = 0;
+        rightScore = 0;
+        leftScoreText = new Rect(20, 20, 20, 20);
+        rightScoreText = new Rect(Screen.width - 30, 20, 20, 20);
+
     }
 
     // Update is called once per frame
     void Update()
     {
-
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            Debug.Log("space");
+            foreach(Prect p in colliderPrects)
+            {
+                Debug.Log(p.name);
+            }
+        }
     }
 
     public static void GUIDrawRect(Rect position, Color color)
@@ -54,10 +83,31 @@ public class Manager : MonoBehaviour
         GUI.Box(position, GUIContent.none, _staticRectStyle);
     }
 
+    public static void GUIDrawRect(Rect position, Color color, string text)
+    {
+        if (_staticRectTexture == null)
+        {
+            _staticRectTexture = new Texture2D(1, 1);
+        }
+
+        if (_staticRectStyle == null)
+        {
+            _staticRectStyle = new GUIStyle();
+            _staticRectStyle.fontSize = 16;
+        }
+
+        _staticRectTexture.SetPixel(0, 0, color);
+        _staticRectTexture.Apply();
+        _staticRectStyle.normal.background = _staticRectTexture;
+        GUI.Box(position, text, _staticRectStyle);
+    }
+
     private void OnGUI()
     {
         GUIDrawRect(centerLine.rect, centerLineColor);
         GUIDrawRect(upperWall.rect, wallColor);
         GUIDrawRect(lowerWall.rect, wallColor);
+        GUIDrawRect(leftScoreText, wallColor, leftScore.ToString());
+        GUIDrawRect(rightScoreText, wallColor, rightScore.ToString());
     }
 }

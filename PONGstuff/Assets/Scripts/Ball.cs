@@ -25,8 +25,56 @@ public class Ball : MonoBehaviour
     {
         ball.rect.x += speed * ballVelocity.normalized.x;
         ball.rect.y += speed * ballVelocity.normalized.y;
-
+        CheckCollisions(ball);
+        CheckOutOfBounds(ball);
         Manager.ballLocation = new Vector2(ball.rect.x, ball.rect.y);
+    }
+
+
+    private void CheckCollisions(Prect b)
+    {
+        foreach (Prect target in Manager.colliderPrects)
+        {
+            if (b.rect.Overlaps(target.rect)) //Unity feature to check box collision
+            {
+                Debug.Log("Collision with" + target.name);
+                if (target.tag == "WALL")
+                {
+                    ballVelocity.y = -ballVelocity.y;
+                }
+
+                if (target.tag == "PADDLE")
+                {
+                    ballVelocity.x = -ballVelocity.x;
+                }
+
+                //Increase the speed after each collision
+                speed *= 1.05f;
+            }
+        }
+    }
+
+    private void CheckOutOfBounds(Prect b)
+    {
+        if (b.rect.x < 0)
+        {
+            Manager.rightScore++;
+            BallReset();
+        }
+
+        if (b.rect.x > Screen.width)
+        {
+            Manager.leftScore++;
+            BallReset();
+        }
+    }
+
+    private void BallReset()
+    {
+        ballVelocity = new Vector2(Random.Range(-500, 750), Random.Range(-500, 750));
+        ball.rect.x = Screen.width / 2;
+        ball.rect.y = Screen.height / 2;
+        speed = Manager.initBallSpeed;
     }
 
     private void OnGUI()
